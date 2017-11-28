@@ -154,7 +154,7 @@ if mode_crack then
 
     --[add to log, and select the 1st one]
     add_to_log(choice_l, OHNKYTA_LOG_CARD,c hoice_l[1], LOG_INIT_COMMAND, OHNKYTA_LOG_DOUBLE)
-    return choice_l[1]
+    return choice_l[1][1],1
     --[]
   end
 end
