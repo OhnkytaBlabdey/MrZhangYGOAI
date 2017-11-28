@@ -103,6 +103,62 @@ function OnSelectInitCommand(cards, to_bp_allowed, to_ep_allowed)
   local SummonableCards = cards.summonable_cards
   local SpSummonableCards = cards.spsummonable_cards
   local RepositionableCards = cards.repositionable_cards
+if mode_crack then
+  --[minium cardid]
+  find_min_cid()
+  --[for log]
+  local choice_l={}
+  local selected_l={}
+  --[had got decided]
+  if choice_path[choice_seq] then
+    --[write the old docu to log, and return the decided choice]
+    --[]
+   else
+    --[a new scene]
+
+    --[act]
+    if #ActivatableCards > 0 then
+     for i=1,#ActivatableCards do
+      choice_l[#choice_l+1]={COMMAND_ACTIVATE,ActivatableCards[i].cardid - MIN_CID }
+     end
+    end
+    --[spsm]
+    if #SpSummonableCards > 0 then
+     for i=1,#SpSummonableCards do
+      choice_l[#choice_l+1]={COMMAND_SPECIAL_SUMMON,SpSummonableCards[i].cardid - MIN_CID }
+     end
+    end
+    --[summon]
+    if #SummonableCards > 0 then
+     for i=1,#SummonableCards do
+      choice_l[#choice_l+1]={COMMAND_SUMMON,SummonableCards[i].cardid - MIN_CID }
+     end
+    end
+    --[set ST]
+    if #cards.st_setable_cards > 0 then
+     for i=1,#cards.st_setable_cards do
+      choice_l[#choice_l+1]={COMMAND_SET_ST,cards.st_setable_cards[i].cardid - MIN_CID }
+     end
+    end
+    --[reposition]
+    if #RepositionableCards > 0 then
+     for i=1,#RepositionableCards do
+      choice_l[#choice_l+1]={COMMAND_CHANGE_POS,RepositionableCards[i].cardid - MIN_CID }
+     end
+    end
+    --[set M]
+    --[next phase]
+    choice_l[#choice_l+1]={6,1}
+    --[next turn]
+    choice_l[#choice_l+1]={7,1}
+
+    --[add to log, and select the 1st one]
+    add_to_log(choice_l, OHNKYTA_LOG_CARD,c hoice_l[1], LOG_INIT_COMMAND, OHNKYTA_LOG_DOUBLE)
+    return choice_l[1]
+    --[]
+  end
+end
+if combo then
  -----
  AI.Chat("Now it is : " .. ob1  .." - ".. ob2 )
  print("Now it is : " .. ob1  .." - ".. ob2 )
@@ -121,10 +177,9 @@ function OnSelectInitCommand(cards, to_bp_allowed, to_ep_allowed)
  
  get_combo_info()
 
---[minium cardid]
--- if not MIN_CID or MIN_CID==0 then
+ --[minium cardid]
   find_min_cid()
--- end
+
 
  if (COMMAND_OHNKYTA_GLOBAL==nil and ida==0) or COMMAND_OHNKYTA_GLOBAL==7 then
  end_log()
@@ -179,6 +234,7 @@ function OnSelectInitCommand(cards, to_bp_allowed, to_ep_allowed)
   end 
  end
  -----
+end
   AI.Chat("DECISION: go to next phase")
   print("DECISION: go to next phase")
   ------------------------------------------------------------

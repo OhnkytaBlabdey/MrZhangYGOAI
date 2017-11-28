@@ -112,6 +112,9 @@ para:
 choice_log:a table contains the choices.
 data_type_log:the data type of the choices, eg:card,cardtable,number,etc.
 selected_log:a table contains the selected choice 
+desc_log:file/function
+choice_type_log:single/double/combine
+double_first: if double choice, this is the first one(selected_log[1] )
 
 return:
 1:succeed
@@ -119,7 +122,7 @@ nil:fail
 
 --]]
 
-function add_to_log(prime_choice_log,data_type_log,selected_log,desc_log,choice_type_log)
+function add_to_log(prime_choice_log, data_type_log, selected_log, desc_log, choice_type_log)
 if not io then io=require("io") end
 local str_log=""
 --init file_log if it has not been open
@@ -211,6 +214,8 @@ end
   
   str_log="},["..'"'.."selected"..'"'.."]={"
   local str_log_container="{"
+  -- 为了更好地记录此次加上以前的选项
+
   -- file_log:write(str_log)
   if (#selected_log>0) and (type_log~=OHNKYTA_LOG_COMBINE) then
   str_log=str_log..selected_log[1]
@@ -285,11 +290,34 @@ function get_choice_path()
   end
  --[]
  end
+ --[copy]
+ for i=1,seq_to_change do
+  choice_path[i]=last_choice_path[i]
+ end
+ --[get_next_choice]
+ choice_path[seq_to_change]=get_next_choice()
  --[]
 end
 
 --[判断是否在此结点有”下一个“选项]
 function check_next_choice(n)
+ --[type_single]
+ if last_choice_path.type[n]==OHNKYTA_LOG_SINGLE then
+  
+ end
+ --[type_double]
+ if last_choice_path.type[n]==OHNKYTA_LOG_DOUBLE then
+  
+ end
+ --[type_combine]
+ if last_choice_path.type[n]==OHNKYTA_LOG_COMBINE then
+  
+ end
+--[]
+end
+
+--[从last_choice_path中得到下一个选项]
+function get_next_choice()
  --[type_single]
  if last_choice_path.type[n]==OHNKYTA_LOG_SINGLE then
   

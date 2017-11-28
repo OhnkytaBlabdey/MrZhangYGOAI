@@ -73,9 +73,10 @@ NOTE_OHNKYTA_GLOBAL=nil
  yesno=nil --trigger/chain/effect
  
  --[]
- mode_log=1 --add log
+ mode_log=true --add log
  --[crack pazzle]
- mode_crack=0 --破解残局
+ mode_crack=false --破解残局
+
  last_log_seq=nil --file_seq-1
  last_log_filepath=nil --log-(file_seq-1).lua
  last_choice_path=nil --last turn had selected
@@ -126,36 +127,36 @@ function OnStartOfDuel()
    io=require("io")
    init_log()
    --[crack mode]
-   if mode_crack then 
-    
+ if mode_crack then 
+    combo=nil
     --[initialization crack member]
-	last_choice_path={}
-	last_choice_path.choice={}
-	last_choice_path.type={}
-	last_choice_path.set={}
+	 last_choice_path={}
+	 last_choice_path.choice={}
+	 last_choice_path.type={}
+	 last_choice_path.set={}
 	
-	last_log_seq=file_seq-1
-	last_log_filepath="./ailog/log-"..last_log_seq..".lua"
-	local last_log=requireoptional(last_log_filepath)
-	combo_log=nil --[与上一次和下一次的读取切断]
+	 last_log_seq=file_seq-1
+	 last_log_filepath="./ailog/log-"..last_log_seq..".lua"
+	 local last_log=requireoptional(last_log_filepath)
+	 combo_log=nil --[与上一次和下一次的读取切断]
 	
-	--[get last_choice_path]
-	local last_length = #last_log
-	last_length = last_length - 1
-	for i=1,last_length do
-	 last_choice_path.choice[i]=last_log[i]["selected"]
-	 last_choice_path.type[i]=last_log[i]["choice_type"]
-	 last_choice_path.set[i]=last_log[i]["choices"]
-	 --eg, last_choice_path[1]={5,0} , for it activated in the first turn. 
-	 --[[
-	 记录选项类型等要素
-	 --]]
-	end
+	 --[get last_choice_path]
+	 local last_length = #last_log
+	 last_length = last_length - 1
+	 for i=1,last_length do
+	  last_choice_path.choice[i]=last_log[i]["selected"]
+	  last_choice_path.type[i]=last_log[i]["choice_type"]
+	  last_choice_path.set[i]=last_log[i]["choices"]
+	  --eg, last_choice_path[1]={5,0} , for it activated in the first turn. 
+	  --[[
+	   记录选项类型等要素
+	  --]]
+	 end
 	
-	--[get choice_path]
-	get_choice_path()
-	--[]
-   end
+	 --[get choice_path]
+	 get_choice_path()
+	 --[]
+ end
   --[]
   end
   print("duel will start now")
