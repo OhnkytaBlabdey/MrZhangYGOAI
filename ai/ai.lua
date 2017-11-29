@@ -75,12 +75,12 @@ NOTE_OHNKYTA_GLOBAL=nil
  --[]
  mode_log=true --add log
  --[crack pazzle]
- mode_crack=false --破解残局
+ mode_crack=true --破解残局
 
  last_log_seq=nil --file_seq-1
  last_log_filepath=nil --log-(file_seq-1).lua
  last_choice_path=nil --last turn had selected
- choice_path=nil --current to select
+ choice_path={} --current to select
  MIN_CID=nil --minium cardid
  --
 PRINT_DRAW = 1 -- for debugging
@@ -91,7 +91,7 @@ function requireoptional(module)
   end
 end
 
-require("ai.mod.AICheckList")
+-- require("ai.mod.AICheckList")
 require("ai.mod.AIHelperFunctions")
 require("ai.mod.AIHelperFunctions2")
 require("ai.mod.AICheckPossibleST")
@@ -101,8 +101,9 @@ require("ai.mod.DeclareCard")
 require("ai.mod.DeclareMonsterType")
 require("ai.mod.SelectBattleCommand")
 -- requireoptional("ai.mod.submod")
+if not mode_crack then
 requireoptional("ai.mod.combo")
-
+end
 requireoptional("ai.mod.SelectCard")
 require("ai.mod.SelectChain")
 require("ai.mod.SelectEffectYesNo")
@@ -129,33 +130,52 @@ function OnStartOfDuel()
    --[crack mode]
  if mode_crack then 
     combo=nil
+	if not choice_seq then choice_seq=1 end
     --[initialization crack member]
 	 last_choice_path={}
 	 last_choice_path.choice={}
 	 last_choice_path.type={}
 	 last_choice_path.set={}
-	
+	 last_choice_path.data_type={}
+	 
 	 last_log_seq=file_seq-1
+	 print("last_log_seq",last_log_seq)
+  if last_log_seq > 0 then
 	 last_log_filepath="./ailog/log-"..last_log_seq..".lua"
-	 local last_log=requireoptional(last_log_filepath)
-	 combo_log=nil --[与上一次和下一次的读取切断]
-	
+	 requireoptional(last_log_filepath)
+	 local last_log=combo_log
+	 --combo_log=nil --[与上一次和下一次的读取切断]
+	if last_log and #last_log > 1 then
 	 --[get last_choice_path]
+	 print("get last_choice_path")
 	 local last_length = #last_log
 	 last_length = last_length - 1
 	 for i=1,last_length do
 	  last_choice_path.choice[i]=last_log[i]["selected"]
 	  last_choice_path.type[i]=last_log[i]["choice_type"]
 	  last_choice_path.set[i]=last_log[i]["choices"]
+	  last_choice_path.data_type[i]=last_log[i]["data_type"]
 	  --eg, last_choice_path[1]={5,0} , for it activated in the first turn. 
 	  --[[
 	   记录选项类型等要素
 	  --]]
 	 end
-	
+	 -- choice_seq=1
+	 -- print("choice_seq is ", choice_seq)
+	end
+	 -- choice_seq=1
+	 -- print("choice_seq is ", choice_seq)
 	 --[get choice_path]
+	 if not choice_seq then choice_seq=1 end
 	 get_choice_path()
+  else
+  print("only log-1 tried.")
+  	 choice_seq=1
+	 print("choice_seq is ", choice_seq)
+	 get_choice_path()
+  end
 	 --[]
+	 
  end
   --[]
   end

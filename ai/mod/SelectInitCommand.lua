@@ -106,42 +106,48 @@ function OnSelectInitCommand(cards, to_bp_allowed, to_ep_allowed)
 if mode_crack then
   --[minium cardid]
   find_min_cid()
+  print("mincid",MIN_CID)
   --[for log]
   local choice_l={}
   local selected_l={}
   --[had got decided]
-  if choice_path[choice_seq] then
+  if (#choice_path > choice_seq) and choice_path[choice_seq] then
     --[write the old docu to log, and return the decided choice]
     --[]
    else
     --[a new scene]
-
+	print("new scene!")
     --[act]
     if #ActivatableCards > 0 then
+	print("acts")
      for i=1,#ActivatableCards do
       choice_l[#choice_l+1]={COMMAND_ACTIVATE,ActivatableCards[i].cardid - MIN_CID }
      end
     end
     --[spsm]
     if #SpSummonableCards > 0 then
+	print("spsms")
      for i=1,#SpSummonableCards do
       choice_l[#choice_l+1]={COMMAND_SPECIAL_SUMMON,SpSummonableCards[i].cardid - MIN_CID }
      end
     end
     --[summon]
     if #SummonableCards > 0 then
+	print("sms")
      for i=1,#SummonableCards do
       choice_l[#choice_l+1]={COMMAND_SUMMON,SummonableCards[i].cardid - MIN_CID }
      end
     end
     --[set ST]
     if #cards.st_setable_cards > 0 then
+	print("sets")
      for i=1,#cards.st_setable_cards do
       choice_l[#choice_l+1]={COMMAND_SET_ST,cards.st_setable_cards[i].cardid - MIN_CID }
      end
     end
     --[reposition]
     if #RepositionableCards > 0 then
+	print("repositions")
      for i=1,#RepositionableCards do
       choice_l[#choice_l+1]={COMMAND_CHANGE_POS,RepositionableCards[i].cardid - MIN_CID }
      end
@@ -151,9 +157,14 @@ if mode_crack then
     choice_l[#choice_l+1]={6,1}
     --[next turn]
     choice_l[#choice_l+1]={7,1}
+	if #choice_l == 2 then
+	 end_log()
+	 return 7,1
+	end
 
-    --[add to log, and select the 1st one]
-    add_to_log(choice_l, OHNKYTA_LOG_CARD,c hoice_l[1], LOG_INIT_COMMAND, OHNKYTA_LOG_DOUBLE)
+    --[add raw log, and select the 1st one]
+    add_raw_log(choice_l, OHNKYTA_LOG_TABLE, {choice_l[1]}, OHNKYTA_LOG_SINGLE)
+	print(choice_l[1][1],1)
     return choice_l[1][1],1
     --[]
   end
@@ -192,7 +203,6 @@ if combo then
   if b1 and b2 then
   AI.Chat('act') 
   print('act')
-  add_to_log(ActivatableCards,OHNKYTA_LOG_CARD,{b1, ActivatableCards[b2].cardid - MIN_CID,seq},LOG_INIT_COMMAND,OHNKYTA_LOG_DOUBLE)
   return b1,b2 
   end
  end
@@ -204,9 +214,6 @@ if combo then
    if b1 and b2 then
     AI.Chat(' summon ') 
 	print(' summon ') 
-	if not add_to_log(SummonableCards,OHNKYTA_LOG_CARD,{b1,SummonableCards[b2].cardid - MIN_CID },LOG_INIT_COMMAND,OHNKYTA_LOG_DOUBLE) then
-    print("failed summon log")
-  end
     return b1,b2
    end 
  end
@@ -218,7 +225,6 @@ if combo then
    if b1 and b2 then
     AI.Chat(' spsm ') 
 	print(' spsm ') 
-	add_to_log(SpSummonableCards,OHNKYTA_LOG_CARD,{b1,SpSummonableCards[b2].cardid - MIN_CID },LOG_INIT_COMMAND,OHNKYTA_LOG_DOUBLE)
     return b1,b2
    end 
  end

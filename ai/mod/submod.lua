@@ -10,16 +10,17 @@
  file_seq=nil
  choice_seq=nil
  str_had_selected=nil
+
 path_log=nil
 file_log=nil 
 --open in add mode to add a beginning code and logs.when decision is to end phase ,write the ending code and close it.
+
 --[choice type]
 OHNKYTA_LOG_COMBINE=1 --todo:组合式的选择
 OHNKYTA_LOG_SINGLE=2 --多选一
-OHNKYTA_LOG_DOUBLE=3 --二元选项。 1：分类     2：序号
 --[data type]
-OHNKYTA_LOG_CARD=1 --可以是多个
 OHNKYTA_LOG_NUM=2 --
+OHNKYTA_LOG_TABLE=3 -- eg, INIT
 --[file description]
 LOG_INIT_COMMAND=1
 LOG_CARD=2
@@ -39,9 +40,10 @@ function find_min_cid()
   local aiall=AIAll()
   if #aiall > 0 then
     MIN_CID=aiall[1].cardid
-    for i=1,#aiall do
-      if aiall[i].cardid < MIN_CID then
-        MIN_CID=aiall[i].cardid
+    for k,v in pairs(aiall) do
+	print("cardid:", v.cardid)
+      if v.cardid <= MIN_CID then
+        MIN_CID=v.cardid
       end
     end
   else
@@ -52,11 +54,11 @@ end
 function check_end_log(text_f)
 local char_l=""
 local ct_l=0
-	local ct_r=0
+local ct_r=0
 local length=text_f:len()
  for i=1,length do
  char_l=text_f:sub(i,i)
-		-- print("char_l : ",char_l)
+ --print("char_l : ",char_l)
   if char_l=="{" then 
    ct_l=ct_l+1
   end
@@ -64,13 +66,31 @@ local length=text_f:len()
 	ct_r=ct_r+1
   end
  end
-	-- print("in func",ct_l,ct_r)
+ print("text_f",text_f)
+ print("in func",ct_l,ct_r)
+ print("char_l",char_l)
  return ct_l==ct_r 
 end
 
 function init_log()
+
+if not os then os=require("os") end
+-- local xx=
+-- print("xx is ",xx)
+if not os.execute("cd \"ailog\" >nul 2>nul") then
+ os.execute("mkdir ailog")
+ print("created.")
+ -- print(os.execute("cd ailog"))
+else
+  os.execute("cd ..")
+  print("dir exists.")
+end
+os=nil
+
 if not io then io=require("io") end
 local str_log=""
+
+if file_exists("./ailog/log-1.lua") then
 --init file_log if it has not been open
  file_seq=1
  path_log="./ailog/log-"..file_seq..".lua"
@@ -81,6 +101,20 @@ local str_log=""
  end
  
  if file_seq > 1 then file_seq=file_seq-1 end
+else
+file_seq=1
+path_log="./ailog/log-1.lua"
+file_log=io.open(path_log,"w+")
+file_log:write("combo_log={}\n")
+file_log:close()
+file_seq=2
+path_log="./ailog/log-2.lua"
+file_log=io.open(path_log,"w+")
+file_log:write("combo_log={")
+file_log:close()
+print("init log complete.")
+return true
+end 
  path_log="./ailog/log-"..file_seq..".lua"
  file_log=io.open(path_log,"r+")
  local l_str=file_log:read("*a")
@@ -89,6 +123,7 @@ local str_log=""
  --todo:筛除已经录制结束的log文件 如：读取所有字符，然后判断其中的{}是否匹配
   file_log:close()
   if check_end_log(l_str) then
+  print("log- "..file_seq.." ended")
    file_seq=file_seq+1
    path_log="./ailog/log-"..file_seq..".lua"
    file_log=io.open(path_log,"a+")
@@ -96,6 +131,7 @@ local str_log=""
    file_log:write(str_log)
    file_log:close()
   end
+  print("log- "..file_seq.." opened")
   file_log=io.open(path_log,"a+")
   
  else
@@ -104,163 +140,15 @@ local str_log=""
   str_log="combo_log={"
   file_log:write(str_log)
   file_log:close()
+  print("path :",path_log)
  end
+ print("init log complete.")
 end
 
---[[ comment:
-para:
-choice_log:a table contains the choices.
-data_type_log:the data type of the choices, eg:card,cardtable,number,etc.
-selected_log:a table contains the selected choice 
-desc_log:file/function
-choice_type_log:single/double/combine
-double_first: if double choice, this is the first one(selected_log[1] )
-
-return:
-1:succeed
-nil:fail
-
---]]
-
-function add_to_log(prime_choice_log, data_type_log, selected_log, desc_log, choice_type_log)
-if not io then io=require("io") end
-local str_log=""
---init file_log if it has not been open
-if not path_log and not file_log then
- init_log()
-end
-
-
---open_file
-file_log=io.open(path_log,"a+")
-
---add logs
-if file_log then
-
---[choice_seq]
-if not choice_seq then
- choice_seq=0
-end
-choice_seq=choice_seq+1
-file_log:write("\n["..choice_seq.."]=")
-
---[had selected]
-if not str_had_selected then
- str_had_selected={}
-end
-str_had_selected[choice_seq]=nil
-
---[finc minium cardid]
- find_min_cid()
-
---[choice description]
-local desc_str=""
-if desc_log then 
---eg:Init/Card/Yesno
-local desc_t={
-[LOG_INIT_COMMAND]="LOG_INIT_COMMAND",
-[LOG_EFFECT_YESNO]="LOG_EFFECT_YESNO"
-}
-desc_str="{["..'"'.."desc"..'"'.."]="..desc_t[desc_log]..","
-file_log:write(desc_str)
-else
-file_log:write("{")
-end
-
-str_log="["..'"'.."choices"..'"'.."]={"
-file_log:write(str_log)
---[card to cardid]
-local choice_log={}
-print("data_type_log:"..data_type_log)
-if data_type_log==OHNKYTA_LOG_CARD then 
-print("choices are cards")
-  if #prime_choice_log > 0 then
- for i=1,#prime_choice_log do 
-  choice_log[i]=prime_choice_log[i].cardid - MIN_CID
- end
-  end
-  else
-  choice_log=prime_choice_log
-end
-
---[debug print]
-local jtm=0
-print("selected: "..#selected_log)
-if #selected_log > 0 then
- for jtm=1,#selected_log do 
-  print(jtm.." : "..selected_log[jtm])
- end
-end
-
-print("choices: "..#choice_log)
-if #choice_log > 0 then
- for jtm=1,#choice_log do 
-  if(choice_log[jtm])then print(jtm.." : "..choice_log[jtm]) end
- end
-end
-
-
-  if (#choice_log>0) and (type_log~=OHNKYTA_LOG_COMBINE) then
-  str_log=""..choice_log[1]
-   if (#choice_log>1) then
-    local seq_max=#choice_log
-	for i=2,seq_max do 
-	 str_log=str_log..","..choice_log[i]
-	end
-   end
-   file_log:write(str_log)
-  end
-  --above write single card,num choices
-  
-  str_log="},["..'"'.."selected"..'"'.."]={"
-  local str_log_container="{"
-  -- 为了更好地记录此次加上以前的选项
-
-  -- file_log:write(str_log)
-  if (#selected_log>0) and (type_log~=OHNKYTA_LOG_COMBINE) then
-  str_log=str_log..selected_log[1]
-  str_log_container = str_log_container ..selected_log[1]
-   if (#selected_log>1) then
-    local seq_max=#selected_log
-	for i=2,seq_max do 
-	 str_log=str_log..","..selected_log[i]
-	 str_log_container = str_log_container ..","..selected_log[i]
-	end
-   end
-   -- file_log:write(str_log)
-  end
-  str_log=str_log.."}"
-  str_log_container = str_log_container .."}"
-  file_log:write(str_log)
-  str_had_selected[choice_seq]=str_log_container
-  str_log_container=nil
-  --above write single card,num selection
-end
---[choice type]
-local choice_type_t={
-  [OHNKYTA_LOG_DOUBLE]="OHNKYTA_LOG_DOUBLE",
-  [OHNKYTA_LOG_SINGLE]="OHNKYTA_LOG_SINGLE",
-  [OHNKYTA_LOG_COMBINE]="OHNKYTA_LOG_COMBINE",
-}
-file_log:write(",["..'"'.."choice_type"..'"'.."]="..choice_type_t[choice_type_log])
---[data type]
-local data_type_t={
-  [OHNKYTA_LOG_CARD]="OHNKYTA_LOG_CARD",
-  [OHNKYTA_LOG_NUM]="OHNKYTA_LOG_NUM",
-}
-file_log:write(",["..'"'.."data_type"..'"'.."]="..data_type_t[data_type_log])
-
---[had selected]
-file_log:write(",["..'"'.."had_selected"..'"'.."]=".."{"..str_had_selected[choice_seq].."}")
-
---[end of a choice]
-file_log:write("},")
---close_file
-file_log:close()
-return true
-end
+--require(addtolog)
 
 function end_log()
+print("end log.")
 --open_file
 file_log=io.open(path_log,"a+")
 file_log:write("\n[-1]=nil\n}\n return combo_log \n")
@@ -274,7 +162,12 @@ end
 
 --[get choice_path]
 function get_choice_path()
- local last_length = #last_choice_path
+ local last_length = #last_choice_path.choice
+ if last_length <1 then
+  choice_path={}
+  print("last_length :", last_length)
+  return true
+ end
  --[[
  从末元查找，由<样本空间,选项类型,上次选项>判断是否在此结点有”下一个“选项
  直到匹配到一个结点：它存在“下一个”选项。
@@ -331,6 +224,124 @@ function get_next_choice()
   
  end
 --[]
+end
+
+function add_raw_log(raw_choices, data_type, selected, choice_type)
+  --[]
+  local str_log=""
+  --init file_log if it has not been open
+  if not path_log and not file_log then
+   init_log()
+  end
+
+
+  --open_file
+  file_log=io.open(path_log,"a+")
+
+  --add logs
+  if file_log then
+
+  --[choice_seq]
+  if not choice_seq then
+   choice_seq=0
+  end
+  choice_seq=choice_seq+1
+  -- file_log:write("\n["..choice_seq.."]=")
+  -- file_log:write("{")
+  str_log=str_log.."\n["..choice_seq.."]=".."{"
+  --[choices]
+  -- file_log:write("[".."choices".."]={")
+  str_log=str_log.."[".."choices".."]={"
+  if #raw_choices > 0 then
+   for i=1,#raw_choices do
+   --[,]
+    if i>1 then
+	 -- file_log:write(",")
+	 str_log=str_log..","
+	end
+	--[DATA TYPE]
+    if data_type==OHNKYTA_LOG_TABLE then
+	--[table]
+	 local achoice_t=raw_choices[i]
+	  -- file_log:write("{")
+	  str_log=str_log.."{"
+	 if #achoice_t > 0 then
+	   for j=1,#achoice_t do 
+	    --[,]
+		if j>1 then
+		 -- file_log:write(",")
+		 str_log=str_log..","
+		end
+		--[table]
+		-- file_log:write(achoice_t[j])
+		str_log=str_log..achoice_t[j]
+		--[]
+	   end
+	  -- file_log:write("}")
+	  str_log=str_log.."}"
+	 end
+	 --[num]
+	elseif data_type==OHNKYTA_LOG_NUM then
+	 --[num]
+	 -- file_log:write(raw_choices[i])
+	 str_log=str_log..raw_choices[i]
+	 --[]
+	end
+	--[]
+   end
+  end
+  -- file_log:write("},")
+  str_log=str_log.."},"
+  --[selected]
+  str_log=str_log.."[".."selected".."]={"
+  
+  if #selected > 0 then
+   for i=1,#selected do
+    if i>1 then
+	 str_log=str_log..","
+	end
+    if data_type==OHNKYTA_LOG_TABLE then
+	 local achoice_t=selected[i]
+	  str_log=str_log.."{"
+	 if #achoice_t > 0 then
+	   for j=1,#achoice_t do 
+		if j>1 then
+		 str_log=str_log..","
+		end
+		str_log=str_log..achoice_t[j]
+	   end
+	 end
+	 str_log=str_log.."}"
+	elseif data_type==OHNKYTA_LOG_NUM then
+    end
+   end
+  end
+  
+  str_log=str_log.."}"
+  --[choice type]
+  local choice_type_t={
+  [OHNKYTA_LOG_SINGLE]="OHNKYTA_LOG_SINGLE",
+  [OHNKYTA_LOG_COMBINE]="OHNKYTA_LOG_COMBINE",
+  }
+  -- file_log:write(",["..'"'.."choice_type"..'"'.."]="..choice_type_t[choice_type])
+  str_log=str_log..",["..'"'.."choice_type"..'"'.."]="..choice_type_t[choice_type]
+  --[data type]
+  local data_type_t={
+  [OHNKYTA_LOG_TABLE]="OHNKYTA_LOG_TABLE",
+  [OHNKYTA_LOG_NUM]="OHNKYTA_LOG_NUM",
+  }
+  -- file_log:write(",["..'"'.."data_type"..'"'.."]="..data_type_t[data_type])
+  str_log=str_log..",["..'"'.."data_type"..'"'.."]="..data_type_t[data_type]
+  --[]
+  --[end of a choice]
+  -- file_log:write("},")
+  str_log=str_log.."},"
+  file_log:write(str_log)
+  --close_file
+  file_log:close()
+  return true
+  end
+  --[]
 end
 
 -- [从combo中读取step存入global]
