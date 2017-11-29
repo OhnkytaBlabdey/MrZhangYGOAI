@@ -251,7 +251,7 @@ function add_raw_log(raw_choices, data_type, selected, choice_type)
   str_log=str_log.."\n["..choice_seq.."]=".."{"
   --[choices]
   -- file_log:write("[".."choices".."]={")
-  str_log=str_log.."[".."choices".."]={"
+  str_log=str_log.."["..'"'.."choices"..'"'.."]={"
   if #raw_choices > 0 then
    for i=1,#raw_choices do
    --[,]
@@ -293,7 +293,7 @@ function add_raw_log(raw_choices, data_type, selected, choice_type)
   -- file_log:write("},")
   str_log=str_log.."},"
   --[selected]
-  str_log=str_log.."[".."selected".."]={"
+  str_log=str_log.."["..'"'.."selected"..'"'.."]={"
   
   if #selected > 0 then
    for i=1,#selected do

@@ -130,7 +130,7 @@ function OnStartOfDuel()
    --[crack mode]
  if mode_crack then 
     combo=nil
-	if not choice_seq then choice_seq=1 end
+	if not choice_seq then choice_seq=0 end
     --[initialization crack member]
 	 last_choice_path={}
 	 last_choice_path.choice={}
@@ -141,9 +141,8 @@ function OnStartOfDuel()
 	 last_log_seq=file_seq-1
 	 print("last_log_seq",last_log_seq)
   if last_log_seq > 0 then
-	 last_log_filepath="./ailog/log-"..last_log_seq..".lua"
-	 requireoptional(last_log_filepath)
-	 local last_log=combo_log
+	 last_log_filepath="./ailog/log-"..last_log_seq
+	 local last_log=require(last_log_filepath)
 	 --combo_log=nil --[与上一次和下一次的读取切断]
 	if last_log and #last_log > 1 then
 	 --[get last_choice_path]
@@ -161,17 +160,17 @@ function OnStartOfDuel()
 	  --]]
 	 end
 	 -- choice_seq=1
-	 -- print("choice_seq is ", choice_seq)
+	 print("1 choice_seq is ", choice_seq)
 	end
 	 -- choice_seq=1
-	 -- print("choice_seq is ", choice_seq)
+	 print("2 choice_seq is ", choice_seq)
 	 --[get choice_path]
-	 if not choice_seq then choice_seq=1 end
+	 if not choice_seq then choice_seq=0 end
 	 get_choice_path()
   else
   print("only log-1 tried.")
   	 choice_seq=1
-	 print("choice_seq is ", choice_seq)
+	 print("3 choice_seq is ", choice_seq)
 	 get_choice_path()
   end
 	 --[]
