@@ -105,7 +105,7 @@ else
 file_seq=1
 path_log="./ailog/log-1.lua"
 file_log=io.open(path_log,"w+")
-file_log:write("combo_log={}\n")
+file_log:write("combo_log={}\n return combo_log\n")
 file_log:close()
 file_seq=2
 path_log="./ailog/log-2.lua"

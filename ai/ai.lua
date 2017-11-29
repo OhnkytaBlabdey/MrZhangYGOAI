@@ -143,12 +143,12 @@ function OnStartOfDuel()
   if last_log_seq > 0 then
 	 last_log_filepath="./ailog/log-"..last_log_seq
 	 local last_log=require(last_log_filepath)
-	 --combo_log=nil --[与上一次和下一次的读取切断]
+	 --combo_log==nil --[与上一次和下一次的读取切断]
 	if last_log and #last_log > 1 then
 	 --[get last_choice_path]
 	 print("get last_choice_path")
 	 local last_length = #last_log
-	 last_length = last_length - 1
+	 -- last_length = last_length - 1 [-1号是不计入的]
 	 for i=1,last_length do
 	  last_choice_path.choice[i]=last_log[i]["selected"]
 	  last_choice_path.type[i]=last_log[i]["choice_type"]
