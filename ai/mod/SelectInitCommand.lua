@@ -117,6 +117,7 @@ if mode_crack then
    else
     --[a new scene]
 	print("new scene!")
+	print("3 #choice_path",#choice_path)
     --[act]
     if #ActivatableCards > 0 then
 	print("acts")

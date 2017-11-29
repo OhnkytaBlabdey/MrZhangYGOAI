@@ -165,7 +165,7 @@ function get_choice_path()
  local last_length = #last_choice_path.choice
  if last_length <1 then
   choice_path={}
-  print("last_length :", last_length)
+  print("get choice path last_length :", last_length)
   return true
  end
  --[[
@@ -174,7 +174,8 @@ function get_choice_path()
  记录此结点的序号，将 choice_path 的第xx项（其之后的为未知）记为“下一个”选项，
  其余的之前的选项复制于 last_choice_path 的前xx-1项。
  --]]
- local seq_to_change=0
+ print("get choice path last_length :", last_length)
+ local seq_to_change=nil
  for i = last_length , 1 ,-1 do
  --[判断是否在此结点有”下一个“选项]
   if check_next_choice(i) then 
@@ -184,23 +185,38 @@ function get_choice_path()
  --[]
  end
  --[copy]
- for i=1,seq_to_change do
+ print("seq_to_change",seq_to_change)
+ choice_path={}
+ for i=1,seq_to_change-1 do
+  -- print("0 i",i)
   choice_path[i]=last_choice_path[i]
  end
+ -- print("1 #choice_path",#choice_path)
  --[get_next_choice]
  choice_path[seq_to_change]=get_next_choice()
+ print("2 #choice_path",#choice_path)
  --[]
 end
 
 --[判断是否在此结点有”下一个“选项]
 function check_next_choice(n)
+print("check next choice")
  --[type_single]
  if last_choice_path.type[n]==OHNKYTA_LOG_SINGLE then
-  
- end
- --[type_double]
- if last_choice_path.type[n]==OHNKYTA_LOG_DOUBLE then
-  
+  --[data_type:=table]
+  if last_choice_path.data_type[n]==OHNKYTA_LOG_TABLE then
+   for k,v in pairs(last_choice_path.set[n]) do 
+    if check_table_equal(v,last_choice_path.choice[n][1]) then 
+	 if k < #last_choice_path.set[n] then 
+	  print("single: table: has next choice")
+	  return true
+	 end
+	end
+   end
+  end
+  --[data_type:=num]
+  if last_choice_path.data_type[n]==OHNKYTA_LOG_NUM then
+  end
  end
  --[type_combine]
  if last_choice_path.type[n]==OHNKYTA_LOG_COMBINE then
@@ -209,14 +225,26 @@ function check_next_choice(n)
 --[]
 end
 
+--[]
+function check_table_equal(a,b)
+	if #a ~= #b then 
+	print("length not equal")
+	return false
+	end
+ local l=#a
+ for i=1,l do
+  if a[i]~=b[i] then
+  print("not equal",i)
+   return false
+  end
+ end
+ return true
+end
+
 --[从last_choice_path中得到下一个选项]
 function get_next_choice()
  --[type_single]
  if last_choice_path.type[n]==OHNKYTA_LOG_SINGLE then
-  
- end
- --[type_double]
- if last_choice_path.type[n]==OHNKYTA_LOG_DOUBLE then
   
  end
  --[type_combine]
