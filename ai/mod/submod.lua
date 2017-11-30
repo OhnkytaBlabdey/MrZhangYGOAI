@@ -189,11 +189,12 @@ function get_choice_path()
  choice_path={}
  for i=1,seq_to_change-1 do
   -- print("0 i",i)
-  choice_path[i]=last_choice_path[i]
+  choice_path[i]=last_choice_path.choice[i]
  end
  -- print("1 #choice_path",#choice_path)
  --[get_next_choice]
- choice_path[seq_to_change]=get_next_choice()
+ -- choice_path[seq_to_change]=
+ get_next_choice(seq_to_change)
  print("2 #choice_path",#choice_path)
  --[]
 end
@@ -206,8 +207,8 @@ print("check next choice")
   --[data_type:=table]
   if last_choice_path.data_type[n]==OHNKYTA_LOG_TABLE then
    for k,v in pairs(last_choice_path.set[n]) do 
-    if check_table_equal(v,last_choice_path.choice[n][1]) then 
-	 if k < #last_choice_path.set[n] then 
+   	if k < (#last_choice_path.set[n]-2) then 
+     if check_table_equal(v,last_choice_path.choice[n][1]) then 
 	  print("single: table: has next choice")
 	  return true
 	 end
@@ -234,7 +235,7 @@ function check_table_equal(a,b)
  local l=#a
  for i=1,l do
   if a[i]~=b[i] then
-  print("not equal",i)
+  print("table 's value not equal",i)
    return false
   end
  end
@@ -242,10 +243,20 @@ function check_table_equal(a,b)
 end
 
 --[从last_choice_path中得到下一个选项]
-function get_next_choice()
+function get_next_choice(n)
  --[type_single]
  if last_choice_path.type[n]==OHNKYTA_LOG_SINGLE then
-  
+  if last_choice_path.data_type[n]==OHNKYTA_LOG_TABLE then
+   for k,v in pairs(last_choice_path.set[n] ) do
+   print("in get next choice")
+	if check_table_equal(v,last_choice_path.choice[n][1]) then
+	 print("ready to get next  :")
+	 choice_path[n]={last_choice_path.set[n][k+1]}
+	 print(choice_path[n][1][1])
+	 return 0
+	end
+   end
+  end
  end
  --[type_combine]
  if last_choice_path.type[n]==OHNKYTA_LOG_COMBINE then
@@ -254,6 +265,7 @@ function get_next_choice()
 --[]
 end
 
+--[add_raw_log]
 function add_raw_log(raw_choices, data_type, selected, choice_type)
   --[]
   local str_log=""
@@ -271,12 +283,12 @@ function add_raw_log(raw_choices, data_type, selected, choice_type)
 
   --[choice_seq]
   if not choice_seq then
-   choice_seq=0
+  print("choice_seq not found\n")
+   choice_seq=1
   end
-  choice_seq=choice_seq+1
-  -- file_log:write("\n["..choice_seq.."]=")
-  -- file_log:write("{")
   str_log=str_log.."\n["..choice_seq.."]=".."{"
+  choice_seq=choice_seq+1
+  print("log:choice_seq added.")
   --[choices]
   -- file_log:write("[".."choices".."]={")
   str_log=str_log.."["..'"'.."choices"..'"'.."]={"
@@ -320,6 +332,7 @@ function add_raw_log(raw_choices, data_type, selected, choice_type)
   end
   -- file_log:write("},")
   str_log=str_log.."},"
+  print("log:choices added.")
   --[selected]
   str_log=str_log.."["..'"'.."selected"..'"'.."]={"
   
@@ -346,6 +359,7 @@ function add_raw_log(raw_choices, data_type, selected, choice_type)
   end
   
   str_log=str_log.."}"
+  print("log:selected added.")
   --[choice type]
   local choice_type_t={
   [OHNKYTA_LOG_SINGLE]="OHNKYTA_LOG_SINGLE",
@@ -353,6 +367,7 @@ function add_raw_log(raw_choices, data_type, selected, choice_type)
   }
   -- file_log:write(",["..'"'.."choice_type"..'"'.."]="..choice_type_t[choice_type])
   str_log=str_log..",["..'"'.."choice_type"..'"'.."]="..choice_type_t[choice_type]
+  print("log:choice_type added.")
   --[data type]
   local data_type_t={
   [OHNKYTA_LOG_TABLE]="OHNKYTA_LOG_TABLE",
@@ -360,11 +375,13 @@ function add_raw_log(raw_choices, data_type, selected, choice_type)
   }
   -- file_log:write(",["..'"'.."data_type"..'"'.."]="..data_type_t[data_type])
   str_log=str_log..",["..'"'.."data_type"..'"'.."]="..data_type_t[data_type]
+  print("log:data_type added.")
   --[]
   --[end of a choice]
   -- file_log:write("},")
   str_log=str_log.."},"
   file_log:write(str_log)
+  print("log:a STEP added.")
   --close_file
   file_log:close()
   return true

@@ -103,6 +103,7 @@ function OnSelectInitCommand(cards, to_bp_allowed, to_ep_allowed)
   local SummonableCards = cards.summonable_cards
   local SpSummonableCards = cards.spsummonable_cards
   local RepositionableCards = cards.repositionable_cards
+  print("TURN :",Duel.GetTurnCount())
 if mode_crack then
   --[minium cardid]
   find_min_cid()
@@ -111,8 +112,57 @@ if mode_crack then
   local choice_l={}
   local selected_l={}
   --[had got decided]
-  if (#choice_path > choice_seq) and choice_path[choice_seq] then
+  if (#choice_path >= choice_seq) and choice_path[choice_seq] then
     --[write the old docu to log, and return the decided choice]
+	print("decided by ai!!")
+	if 1 ~= 0 then 
+	--[act]
+    if #ActivatableCards > 0 then
+	print("acts list")
+     for i=1,#ActivatableCards do
+      choice_l[#choice_l+1]={COMMAND_ACTIVATE,ActivatableCards[i].cardid - MIN_CID }
+     end
+    end
+    --[spsm]
+    if #SpSummonableCards > 0 then
+	print("spsms list")
+     for i=1,#SpSummonableCards do
+      choice_l[#choice_l+1]={COMMAND_SPECIAL_SUMMON,SpSummonableCards[i].cardid - MIN_CID }
+     end
+    end
+    --[summon]
+    if #SummonableCards > 0 then
+	print("sms list")
+     for i=1,#SummonableCards do
+      choice_l[#choice_l+1]={COMMAND_SUMMON,SummonableCards[i].cardid - MIN_CID }
+     end
+    end
+    --[set ST]
+    if #cards.st_setable_cards > 0 then
+	print("sets list")
+     for i=1,#cards.st_setable_cards do
+      choice_l[#choice_l+1]={COMMAND_SET_ST,cards.st_setable_cards[i].cardid - MIN_CID }
+     end
+    end
+    --[reposition]
+    if #RepositionableCards > 0 then
+	print("repositions list")
+     for i=1,#RepositionableCards do
+      choice_l[#choice_l+1]={COMMAND_CHANGE_POS,RepositionableCards[i].cardid - MIN_CID }
+     end
+    end
+    --[set M]
+    --[next phase]
+    choice_l[#choice_l+1]={6,1}
+    --[next turn]
+    choice_l[#choice_l+1]={7,1}
+	end
+    
+	--[add decided log, and select the decided one]
+	print( choice_path[choice_seq][1][1],1)
+    add_raw_log(choice_l, OHNKYTA_LOG_TABLE, choice_path[choice_seq], OHNKYTA_LOG_SINGLE)
+	
+    return choice_path[choice_seq-1][1][1],1
     --[]
    else
     --[a new scene]
@@ -244,6 +294,7 @@ if combo then
 end
   AI.Chat("DECISION: go to next phase")
   print("DECISION: go to next phase")
+  end_log()
   ------------------------------------------------------------
   -- Proceed to the next phase, and let AI write epic line in chat
   ------------------------------------------------------------

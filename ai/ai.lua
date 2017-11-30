@@ -130,7 +130,7 @@ function OnStartOfDuel()
    --[crack mode]
  if mode_crack then 
     combo=nil
-	if not choice_seq then choice_seq=0 end
+	if not choice_seq then choice_seq=1 end
     --[initialization crack member]
 	 last_choice_path={}
 	 last_choice_path.choice={}
@@ -165,7 +165,7 @@ function OnStartOfDuel()
 	 -- choice_seq=1
 	 print("2 choice_seq is ", choice_seq)
 	 --[get choice_path]
-	 if not choice_seq then choice_seq=0 end
+	 if not choice_seq then choice_seq=1 end
 	 get_choice_path()
   else
   print("only log-1 tried.")
