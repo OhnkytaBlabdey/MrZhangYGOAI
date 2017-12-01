@@ -20,6 +20,8 @@ if #cards==0 then return 0,0 end
 for i=1,#cards do
  print(i .. " card OnSelectChain is : " .. cards[i].id )
 end
+--[]
+if combo then
  AI.Chat("Now OnSelectChain is : " .. ob1  .." - ".. ob2 )
  print("Now OnSelectChain is : " .. ob1  .." - ".. ob2 )
  get_next_step()
@@ -50,6 +52,9 @@ end
     return 1,i
    end
   end
+ end
+ 
+ --[]
  end
  ------
 

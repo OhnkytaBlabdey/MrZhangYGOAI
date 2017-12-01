@@ -130,6 +130,7 @@ function OnStartOfDuel()
    init_log()
    --[crack mode]
  if mode_crack then 
+ --[init crack]
     combo=nil
 	if not choice_seq then choice_seq=1 end
     --[initialization crack member]
@@ -175,7 +176,7 @@ function OnStartOfDuel()
 	 get_choice_path()
   end
 	 --[]
-	 
+ --[] 
  end
   --[]
   end

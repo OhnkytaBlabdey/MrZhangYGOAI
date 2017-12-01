@@ -104,8 +104,9 @@ function OnSelectInitCommand(cards, to_bp_allowed, to_ep_allowed)
   local SpSummonableCards = cards.spsummonable_cards
   local RepositionableCards = cards.repositionable_cards
   print("TURN :",Duel.GetTurnCount())
+  print("PHASE :" , Duel.GetCurrentPhase())
   if LAST_TURN~=Duel.GetTurnCount() then
-   LAST_TURN~=Duel.GetTurnCount()
+   LAST_TURN=Duel.GetTurnCount()
      --[minium cardid]
 	find_min_cid()
 	print("mincid",MIN_CID)
@@ -172,6 +173,7 @@ if mode_crack then
     --[a new scene]
 	print("new scene!")
 	print("3 #choice_path",#choice_path)
+	if 1~=0 then 
     --[act]
     if #ActivatableCards > 0 then
 	print("acts")
@@ -212,7 +214,9 @@ if mode_crack then
     choice_l[#choice_l+1]={6,1}
     --[next turn]
     choice_l[#choice_l+1]={7,1}
-	if #choice_l == 2 then
+	end 
+	
+	if #choice_l == 2 and Duel.GetCurrentPhase()==0x100 then
 	 end_log()
 	 return 7,1
 	end
@@ -224,6 +228,7 @@ if mode_crack then
     --[]
   end
 end
+
 if combo then
  -----
  AI.Chat("Now it is : " .. ob1  .." - ".. ob2 )
@@ -298,7 +303,7 @@ if combo then
 end
   AI.Chat("DECISION: go to next phase")
   print("DECISION: go to next phase")
-  end_log()
+  --end_log()
   ------------------------------------------------------------
   -- Proceed to the next phase, and let AI write epic line in chat
   ------------------------------------------------------------
