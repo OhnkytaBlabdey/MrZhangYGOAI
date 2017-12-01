@@ -218,6 +218,7 @@ if mode_crack then
 	
 	if #choice_l == 2 and Duel.GetCurrentPhase()==0x100 then
 	 end_log()
+	 init_crack()
 	 return 7,1
 	end
 
