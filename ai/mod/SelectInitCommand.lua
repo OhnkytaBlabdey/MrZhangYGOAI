@@ -104,10 +104,14 @@ function OnSelectInitCommand(cards, to_bp_allowed, to_ep_allowed)
   local SpSummonableCards = cards.spsummonable_cards
   local RepositionableCards = cards.repositionable_cards
   print("TURN :",Duel.GetTurnCount())
+  if LAST_TURN~=Duel.GetTurnCount() then
+   LAST_TURN~=Duel.GetTurnCount()
+     --[minium cardid]
+	find_min_cid()
+	print("mincid",MIN_CID)
+  end
 if mode_crack then
-  --[minium cardid]
-  find_min_cid()
-  print("mincid",MIN_CID)
+
   --[for log]
   local choice_l={}
   local selected_l={}

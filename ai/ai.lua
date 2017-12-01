@@ -54,6 +54,7 @@ EXTRA_SUMMON = 0
 LP_RECOVER = 0
 --
 -- drct=4
+LAST_TURN=nil
 ob1=0
 ob2=0
 --第二级的数值即对应着循环的（最）小单元 ； 数值于onselectinitcommand时计算更新 ，并 根据此值决定这一步的command 

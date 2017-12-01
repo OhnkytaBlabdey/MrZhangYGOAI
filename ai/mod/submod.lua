@@ -185,7 +185,10 @@ function get_choice_path()
  --[]
  end
  --[copy]
- print("seq_to_change",seq_to_change)
+ if not seq_to_change then
+  print("no seq_to_change")
+ end
+ print("1 seq_to_change",seq_to_change)
  choice_path={}
  for i=1,seq_to_change-1 do
   -- print("0 i",i)
