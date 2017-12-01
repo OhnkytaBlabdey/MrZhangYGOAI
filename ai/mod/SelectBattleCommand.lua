@@ -18,6 +18,13 @@ function AttackTargetSelection(cards,attacker)
   ApplyATKBoosts(result)
   ApplyATKBoosts(cards)
   result = nil
+  -----
+  --[crack]
+  if mode_crack then
+  print("crack mode :","AttackTargetSelection")
+  end
+  --[]
+  -----
   local d = DeckCheck()
   if d and d.AttackTarget then
     result = d.AttackTarget(cards,attacker)

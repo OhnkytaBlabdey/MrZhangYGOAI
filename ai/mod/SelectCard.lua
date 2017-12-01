@@ -15,6 +15,9 @@
 
 function OnSelectCard(cards, minTargets, maxTargets, triggeringID,triggeringCard)
 local result = {}
+--[combo mode]
+if combo then
+--[]
 AI.Chat("on select : ".. ob1 .." - ".. ob2 .. " ")
   print("on select : ".. ob1 .." - ".. ob2 .. " ")
   
@@ -135,11 +138,11 @@ end
  
 
 -----
-  
-  
-  
-  
-  
+ end 
+--[crack mode]
+if mode_crack then
+print("OnSelectCard","in crack mode...")
+end
 -----  
   
   

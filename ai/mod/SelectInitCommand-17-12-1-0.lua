@@ -103,7 +103,7 @@ function OnSelectInitCommand(cards, to_bp_allowed, to_ep_allowed)
   local SummonableCards = cards.summonable_cards
   local SpSummonableCards = cards.spsummonable_cards
   local RepositionableCards = cards.repositionable_cards
---[注意cardid-min与i的区别]
+
   print("TURN :",Duel.GetTurnCount())
   print("PHASE :" , Duel.GetCurrentPhase())
   if LAST_TURN~=Duel.GetTurnCount() then
@@ -319,8 +319,7 @@ if combo then
 end
   AI.Chat("DECISION: go to next phase")
   print("DECISION: go to next phase")
-  print(" ended")
-  end_log()
+  --end_log()
   ------------------------------------------------------------
   -- Proceed to the next phase, and let AI write epic line in chat
   ------------------------------------------------------------
