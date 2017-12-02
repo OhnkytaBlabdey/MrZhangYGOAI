@@ -40,7 +40,9 @@ function init_crack()
 	 last_choice_path.type={}
 	 last_choice_path.set={}
 	 last_choice_path.data_type={}
-	 
+	 if not file_seq then 
+	  init_log()
+	 end
 	 last_log_seq=file_seq-1
 	 print("last_log_seq",last_log_seq)
   if last_log_seq > 0 then
@@ -207,6 +209,7 @@ file_log:write("\n[-1]=nil\n}\n return combo_log \n")
 file_log:close()
 file_log=nil
 path_log=nil
+file_seq=nil
 str_had_selected=nil
 choice_seq=nil
 end

@@ -103,16 +103,23 @@ function OnSelectInitCommand(cards, to_bp_allowed, to_ep_allowed)
   local SummonableCards = cards.summonable_cards
   local SpSummonableCards = cards.spsummonable_cards
   local RepositionableCards = cards.repositionable_cards
+
+if mode_crack then
 --[注意cardid-min与i的区别]
+  local phase_t={
+  [PHASE_MAIN1]="PHASE_MAIN1",
+  [PHASE_MAIN2]="PHASE_MAIN2",
+  [PHASE_BATTLE]="PHASE_BATTLE",
+  [PHASE_BATTLE_START]="PHASE_BATTLE_START"
+  }
   print("TURN :",Duel.GetTurnCount())
-  print("PHASE :" , Duel.GetCurrentPhase())
+  print("PHASE :" , Duel.GetCurrentPhase(), phase_t[Duel.GetCurrentPhase()])
   if LAST_TURN~=Duel.GetTurnCount() then
    LAST_TURN=Duel.GetTurnCount()
      --[minium cardid]
 	find_min_cid()
 	print("mincid",MIN_CID)
   end
-if mode_crack then
 	local i_to_exe=1 
   --[for log]
   local choice_l={}
@@ -191,8 +198,14 @@ if mode_crack then
     
 	--[add decided log, and select the decided one]
 	print( choice_path[choice_seq][1][1],i_to_exe)
+	if  choice_path[choice_seq][1][1]>=COMMAND_TO_NEXT_PHASE and Duel.GetCurrentPhase()==0x100 then 
+	 print("ai says it should end --------------------------------------")
+	 end_log()
+	 init_crack()
+	 return 6,1 
+	end
     add_raw_log(choice_l, OHNKYTA_LOG_TABLE, choice_path[choice_seq], OHNKYTA_LOG_SINGLE)
-	
+	--[seq ++ ]
     return choice_path[choice_seq-1][1][1],i_to_exe
     --[]
    else
@@ -242,7 +255,6 @@ if mode_crack then
       choice_l[#choice_l+1]={COMMAND_CHANGE_POS,RepositionableCards[i].cardid - MIN_CID }
      end
     end
-    --[set M]
     --[next phase]
     choice_l[#choice_l+1]={6,1}
     --[next turn]
