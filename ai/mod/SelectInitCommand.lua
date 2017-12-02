@@ -258,7 +258,7 @@ if mode_crack then
     --[add raw log, and select the 1st one]
     add_raw_log(choice_l, OHNKYTA_LOG_TABLE, {choice_l[1]}, OHNKYTA_LOG_SINGLE)
 	print(choice_l[1][1],1)
-    return choice_l[1][1],1
+    return choice_l[1][1],1 
     --[]
   end
 end

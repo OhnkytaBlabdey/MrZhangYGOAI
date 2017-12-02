@@ -30,6 +30,9 @@ LOG_NUMBER=4
 --[init crack]
 function init_crack()
     combo=nil
+	combo_log=nil 
+	last_choice_path=nil 
+	choice_seq=nil 
 	if not choice_seq then choice_seq=1 end
     --[initialization crack member]
 	 last_choice_path={}
@@ -235,6 +238,7 @@ function get_choice_path()
  --[copy]
  if not seq_to_change then
   print("no seq_to_change")
+  print("\n.\n.\n.\n.\n.")
  end
  print("1 seq_to_change",seq_to_change)
  choice_path={}
@@ -258,7 +262,7 @@ print("check next choice")
   --[data_type:=table]
   if last_choice_path.data_type[n]==OHNKYTA_LOG_TABLE then
    for k,v in pairs(last_choice_path.set[n]) do 
-   	if k < (#last_choice_path.set[n]-2) then 
+   	if k < (#last_choice_path.set[n]-1) then 
      if check_table_equal(v,last_choice_path.choice[n][1]) then 
 	  print("single: table: has next choice")
 	  return true
