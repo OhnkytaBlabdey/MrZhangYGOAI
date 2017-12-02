@@ -113,7 +113,7 @@ function OnSelectInitCommand(cards, to_bp_allowed, to_ep_allowed)
 	print("mincid",MIN_CID)
   end
 if mode_crack then
-
+	local i_to_exe=1 
   --[for log]
   local choice_l={}
   local selected_l={}
@@ -127,6 +127,9 @@ if mode_crack then
 	print("activate list")
      for i=1,#ActivatableCards do
       choice_l[#choice_l+1]={COMMAND_ACTIVATE,ActivatableCards[i].cardid - MIN_CID }
+	  if ActivatableCards[i].cardid - MIN_CID == choice_path[choice_seq][1][2] then 
+	   i_to_exe = i 
+	  end
      end
     end
     --[spsm]
@@ -134,6 +137,9 @@ if mode_crack then
 	print("sp summon list")
      for i=1,#SpSummonableCards do
       choice_l[#choice_l+1]={COMMAND_SPECIAL_SUMMON,SpSummonableCards[i].cardid - MIN_CID }
+	  if SpSummonableCards[i].cardid - MIN_CID == choice_path[choice_seq][1][2] then 
+	   i_to_exe = i 
+	  end
      end
     end
     --[summon]
@@ -141,13 +147,19 @@ if mode_crack then
 	print("summon list")
      for i=1,#SummonableCards do
       choice_l[#choice_l+1]={COMMAND_SUMMON,SummonableCards[i].cardid - MIN_CID }
+	  if SummonableCards[i].cardid - MIN_CID == choice_path[choice_seq][1][2] then 
+	   i_to_exe = i 
+	  end
      end
     end
 	--[set monster_setable_cards]
     if #cards.monster_setable_cards > 0 then
 	print("set monster list")
      for i=1,#cards.monster_setable_cards do
-      choice_l[#choice_l+1]={COMMAND_SET_ST,cards.monster_setable_cards[i].cardid - MIN_CID }
+      choice_l[#choice_l+1]={COMMAND_SET_MONSTER,cards.monster_setable_cards[i].cardid - MIN_CID }
+	  if cards.monster_setable_cards[i].cardid - MIN_CID == choice_path[choice_seq][1][2] then 
+	   i_to_exe = i 
+	  end
      end
     end
     --[set ST]
@@ -155,6 +167,9 @@ if mode_crack then
 	print("set ST list")
      for i=1,#cards.st_setable_cards do
       choice_l[#choice_l+1]={COMMAND_SET_ST,cards.st_setable_cards[i].cardid - MIN_CID }
+	  if cards.st_setable_cards[i].cardid - MIN_CID == choice_path[choice_seq][1][2] then 
+	   i_to_exe = i 
+	  end
      end
     end
     --[reposition]
@@ -162,6 +177,9 @@ if mode_crack then
 	print("repositions list")
      for i=1,#RepositionableCards do
       choice_l[#choice_l+1]={COMMAND_CHANGE_POS,RepositionableCards[i].cardid - MIN_CID }
+	  if RepositionableCards[i].cardid - MIN_CID == choice_path[choice_seq][1][2] then 
+	   i_to_exe = i 
+	  end
      end
     end
     --[set M]
@@ -172,10 +190,10 @@ if mode_crack then
 	end
     
 	--[add decided log, and select the decided one]
-	print( choice_path[choice_seq][1][1],1)
+	print( choice_path[choice_seq][1][1],i_to_exe)
     add_raw_log(choice_l, OHNKYTA_LOG_TABLE, choice_path[choice_seq], OHNKYTA_LOG_SINGLE)
 	
-    return choice_path[choice_seq-1][1][1],1
+    return choice_path[choice_seq-1][1][1],i_to_exe
     --[]
    else
     --[a new scene]
@@ -207,7 +225,7 @@ if mode_crack then
     if #cards.monster_setable_cards > 0 then
 	print("set monster new list")
      for i=1,#cards.monster_setable_cards do
-      choice_l[#choice_l+1]={COMMAND_SET_ST,cards.monster_setable_cards[i].cardid - MIN_CID }
+      choice_l[#choice_l+1]={COMMAND_SET_MONSTER,cards.monster_setable_cards[i].cardid - MIN_CID }
      end
     end
     --[set ST]
