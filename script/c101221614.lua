@@ -102,7 +102,7 @@ end
 
 		-- Debug.AddCard(102380,1,1,16,0,1)
 		-- AddCard(pl,code,loc,seq,pos)
-		showtable(para_table)
+		-- showtable(para_table)
 
 		tmp=para_table[1]
 
@@ -110,6 +110,8 @@ end
 		code=tonumber(cd)
 		-- cd="code"
 		pl=tonumber(para_table[2])
+		pl=1-pl
+		--[change fields]
 		loc=tonumber(para_table[4])
 		seq=tonumber(para_table[5])
 		tmp=para_table[6]
@@ -117,6 +119,17 @@ end
 		pos=tonumber(tmpstrpos)
 
 		AddCard(pl,code,loc,seq,pos)
+		else
+			_,ct = line_str:gsub("Debug.SetPlayerInfo","_")
+			if ct==1 then
+			local para_table=line_str:split(",")
+			tmp=para_table[1]
+			local strplayer=''..tmp:sub(21,-1)
+			player=tonumber(strplayer)
+			player=1-player
+			lp=tonumber(para_table[2])
+			Duel.SetLP(player,lp)
+			end
 		end
 		line_str=pz_file:read()
 	end
