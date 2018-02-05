@@ -193,11 +193,12 @@ elseif loc==LOCATION_MZONE then
 Duel.SendtoDeck(c_a,pl,0,REASON_RULE)
 --Duel.MoveToField(c_a,pl,pl,loc,pos,false)
 Duel.SpecialSummon(c_a,0x00000001,pl,pl,true,true,pos)
-elseif loc ==LOCATION_SZONE then
+elseif loc ==LOCATION_SZONE or loc == LOCATION_FZONE then
 Duel.SSet(pl,c_a,pl)
 if pos <= POS_FACEUP then
 Duel.ChangePosition(c_a,POS_FACEUP,5,5,5,false)
 end
+
 end
 --
 Duel.MoveSequence(c_a,seq)
